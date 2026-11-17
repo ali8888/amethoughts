@@ -1,0 +1,65 @@
+name: Linux rpm arm64 build
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+env:
+  FLUTTER_VERSION: "3.50.0"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Get version from pubspec.yaml
+        id: get_version
+        run: |
+          VERSION=$(sed -n 's/^version: \([0-9]*\.[0-9]*\.[0-9]*\).*/\1/p' pubspec.yaml)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+  
+  build-linux-rpm-arm64:
+      needs: build
+      runs-on: ubuntu-22.04-arm
+      container: fedora:45
+      steps:
+        - uses: actions/checkout@v6
+
+        - name: Install dependencies
+          run: dnf install -y rpm patchelf clang cmake git ninja-build pkgconf-pkg-config gtk3-devel lzma-sdk-devel
+
+        - name: Setup Flutter SDK
+          run: |
+            git clone --depth 1 --branch ${{ env.FLUTTER_VERSION }} https://github.com/flutter/flutter.git $HOME/flutter
+            echo "$HOME/flutter/bin" >> $GITHUB_PATH
+            $HOME/flutter/bin/flutter --version
+
+        - run: dart pub global activate fastforge
+        - name: Build rpm package
+          run: PATH="$PATH:$HOME/.pub-cache/bin" fastforge release --name=release --jobs=linux-rpm
+
+        - name: Find rpm file
+          id: find_rpm
+          run: |
+            TEMP_RPM_PATH=$(find dist -name "amethoughts-${{ needs.build.outputs.version }}-linux.rpm")
+            RPM_PATH="${TEMP_RPM_PATH%.rpm}-arm64.rpm"
+            mv "$TEMP_RPM_PATH" "$RPM_PATH"
+            echo "rpm_path=$RPM_PATH" >> $GITHUB_OUTPUT
+
+        - name: Check if rpm file exists
+          id: check_file
+          run: |
+            if [[ ! -f "${{ steps.find_rpm.outputs.rpm_path }}" ]]; then
+              echo "File not found: ${{ steps.find_rpm.outputs.rpm_path }}"
+              exit 1
+            fi
+
+        - name: Upload rpm file
+          uses: actions/upload-artifact@v6
+          with:
+            name: linux-rpm-arm64
+            path: ${{ steps.find_rpm.outputs.rpm_path }}

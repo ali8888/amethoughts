@@ -1,0 +1,12 @@
+display_name: Amethoughts
+icon: assets/icon.png
+summary: a productivity tool that aims to minimize distractions
+vendor: Lymesque
+packager: Lymesque
+license: AGPLv3
+url: https://github.com/ali8888/amethoughts
+
+categories:
+  - Utility
+
+startup_notify: true

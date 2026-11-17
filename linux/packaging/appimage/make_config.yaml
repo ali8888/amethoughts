@@ -1,0 +1,13 @@
+display_name: Amethoughts
+
+icon: assets/icon.png
+
+keywords:
+  - Productivity
+
+categories:
+  - Utility
+
+startup_notify: true
+
+include: []

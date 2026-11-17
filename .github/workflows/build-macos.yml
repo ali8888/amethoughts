@@ -1,0 +1,46 @@
+name: MacOS build
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+env:
+  FLUTTER_VERSION: "3.50.0"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Get version from pubspec.yaml
+        id: get_version
+        run: |
+          VERSION=$(sed -n 's/^version: \([0-9]*\.[0-9]*\.[0-9]*\).*/\1/p' pubspec.yaml)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+  build-macos:
+      needs: build
+      runs-on: macos-latest
+      steps:
+        - uses: actions/checkout@v6
+
+        - uses: subosito/flutter-action@v2
+          with:
+            flutter-version: ${{ env.FLUTTER_VERSION }}
+
+        - run: flutter pub get
+        - run: flutter build macos --release
+
+        - name: Package macOS
+          run: |
+            cd build/macos/Build/Products/Release
+            zip -r "$GITHUB_WORKSPACE/amethoughts-${{ needs.build.outputs.version }}-macos.zip" *.app
+
+        - uses: actions/upload-artifact@v6
+          with:
+            name: macos
+            path: amethoughts-${{ needs.build.outputs.version }}-macos.zip

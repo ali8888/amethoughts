@@ -1,0 +1,20 @@
+display_name: Amethoughts
+package_name: amethoughts
+
+maintainer:
+  name: Lymesque
+
+priority: optional
+
+section: utils
+
+installed_size: 27000
+
+essential: false
+
+icon: assets/icon.png
+
+categories:
+  - Utility
+
+startup_notify: true

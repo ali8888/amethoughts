@@ -1,0 +1,4 @@
+
+void enableLeaveConfirmation() {}
+
+void disableLeaveConfirmation() {}
