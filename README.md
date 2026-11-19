@@ -6,6 +6,9 @@
     &nbsp; Amethoughts
 </h1>
 
+
+<img src="readme_media/screenies.png">
+
 A productivity tool that aims to help you minimize your distractions in order to focus on your work. Now available for Windows, MacOS (untested), Linux, Web and Android.
 
 It's simple : The moment that some random unrelated thought crosses your mind, you write it down in Amethoughts, and resume your work without wasting a second nor worrying about forgetting it.
