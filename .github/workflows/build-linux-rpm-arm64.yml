@@ -30,7 +30,9 @@ jobs:
         - uses: actions/checkout@v6
 
         - name: Install dependencies
-          run: dnf install -y rpm patchelf clang cmake git ninja-build pkgconf-pkg-config gtk3-devel lzma-sdk-devel
+          run: |
+            sudo apt update
+            sudo apt install -y rpm patchelf clang cmake git ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev
 
         - name: Setup Flutter SDK
           run: |

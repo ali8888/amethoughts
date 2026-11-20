@@ -44,7 +44,7 @@ jobs:
 
         - name: Package Linux
           run: |
-            cd build/linux/x64/release/bundle
+            cd build/linux/arm64/release/bundle
             tar -czf ../../../../../amethoughts-${{ needs.build.outputs.version }}-linux-x64.tar.gz *
 
         - uses: actions/upload-artifact@v6

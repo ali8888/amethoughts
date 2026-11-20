@@ -25,7 +25,7 @@ jobs:
   build-linux-rpm-x64:
       needs: build
       runs-on: ubuntu-latest
-      container: fedora:45
+
       steps:
         - uses: actions/checkout@v6
 
@@ -34,7 +34,9 @@ jobs:
             flutter-version: ${{ env.FLUTTER_VERSION }}
 
         - name: Install Linux dependencies
-          run: dnf install -y rpm patchelf clang cmake git ninja-build pkgconf-pkg-config gtk3-devel lzma-sdk-devel
+          run: |
+            sudo apt update
+            sudo apt install -y rpm patchelf clang cmake git ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev
 
         - run: dart pub global activate fastforge
         - name: Build rpm package
