@@ -25,7 +25,7 @@ jobs:
   build-linux-rpm-arm64:
       needs: build
       runs-on: ubuntu-22.04-arm64
-      channel: fedora:45
+      container: fedora:45
 
       steps:
         - uses: actions/checkout@v6
