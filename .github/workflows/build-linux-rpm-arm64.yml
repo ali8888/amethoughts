@@ -25,14 +25,13 @@ jobs:
   build-linux-rpm-arm64:
       needs: build
       runs-on: ubuntu-22.04-arm64
-      
+      channel: fedora:45
+
       steps:
         - uses: actions/checkout@v6
 
         - name: Install dependencies
-          run: |
-            sudo apt update
-            sudo apt install -y rpm patchelf clang cmake git ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev
+          run: dnf install -y clang cmake gtk3-devel ninja-build jq findutils which git patchelf rpm-build
 
         - name: Setup Flutter SDK
           run: |

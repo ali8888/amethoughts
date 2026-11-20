@@ -25,6 +25,7 @@ jobs:
   build-deb-arm64:
     needs: build
     runs-on: ubuntu-22.04-arm
+    container: fedora:45
 
     steps:
       - uses: actions/checkout@v6
