@@ -32,15 +32,35 @@ jobs:
           with:
             flutter-version: ${{ env.FLUTTER_VERSION }}
 
-        - run: flutter pub get
-        - run: flutter build macos --release
+        - uses: actions/setup-node@v7
+          with:
+            node-version: 24
+            package-manager-cache: false
 
-        - name: Package macOS
+        - run: npm install -g appdmg
+
+        - run: dart pub global activate fastforge
+        - name: Build macOS package
+          run: fastforge release --name=release --jobs=macos
+
+        - name: Find dmg file
+          id: find_dmg
           run: |
-            cd build/macos/Build/Products/Release
-            zip -r "$GITHUB_WORKSPACE/amethoughts-${{ needs.build.outputs.version }}-macos.zip" *.app
+            ESCAPED_VERSION=$(regex_escape "${{ needs.build.outputs.version }}")
+            TEMP_DMG_PATH=$(find dist -regextype posix-extended -regex ".*/amethoughts-${ESCAPED_VERSION}*\+[0-9]+-macos\.dmg")
+            DMG_PATH="${TEMP_DMG_PATH%.dmg}-arm64.dmg"
+            mv "$TEMP_DMG_PATH" "$DMG_PATH"
+            echo "dmg_path=$DMG_PATH" >> $GITHUB_OUTPUT
+
+        - name: Check if dmg file exists
+          id: check_file
+          run: |
+            if [[ ! -f "${{ steps.find_dmg.outputs.dmg_path }}" ]]; then
+              echo "File not found: ${{ steps.find_dmg.outputs.dmg_path }}"
+              exit 1
+            fi
 
         - uses: actions/upload-artifact@v6
           with:
             name: macos
-            path: amethoughts-${{ needs.build.outputs.version }}-macos.zip
+            path: ${{ steps.find_dmg.outputs.dmg_path }}

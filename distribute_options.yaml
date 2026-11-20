@@ -14,3 +14,7 @@ releases:
         package:
           platform: linux
           target: appimage
+      - name: macos
+        package:
+          platform: macos
+          target: dmg

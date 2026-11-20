@@ -50,8 +50,9 @@ jobs:
         - name: Find appimage file
           id: find_appimage
           run: |
-            TEMP_APPIMAGE_PATH=$(find dist -name "amethoughts-${{ needs.build.outputs.version }}-linux.AppImage")
-            APPIMAGE_PATH="${TEMP_APPIMAGE_PATH%.AppImage}-x64.AppImage"
+            ESCAPED_VERSION=$(regex_escape "${{ needs.build.outputs.version }}")
+            TEMP_APPIMAGE_PATH=$(find dist -regextype posix-extended -regex ".*/amethoughts-${ESCAPED_VERSION}*\+[0-9]+-linux\.AppImage")
+            APPIMAGE_PATH="amethoughts-${{ needs.build.outputs.version }}-linux-arm64.AppImage"
             mv "$TEMP_APPIMAGE_PATH" "$APPIMAGE_PATH"
             echo "appimage_path=$APPIMAGE_PATH" >> $GITHUB_OUTPUT
 
