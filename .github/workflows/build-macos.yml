@@ -46,7 +46,7 @@ jobs:
         - name: Find dmg file
           id: find_dmg
           run: |
-            TEMP_DMG_PATH=$(find dist -regextype posix-extended -regex ".*/amethoughts-${{ needs.build.outputs.version }}*\+[0-9]+-macos\.dmg")
+            TEMP_DMG_PATH=$(find dist -type f | grep -E "/amethoughts-${{ needs.build.outputs.version }}.*\+[0-9]+-macos\.dmg$" | head -n 1)
             DMG_PATH="${TEMP_DMG_PATH%.dmg}-arm64.dmg"
             mv "$TEMP_DMG_PATH" "$DMG_PATH"
             echo "dmg_path=$DMG_PATH" >> $GITHUB_OUTPUT
