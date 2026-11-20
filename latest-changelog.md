@@ -1,3 +1,0 @@
-## What's new in v1.0.0
-
-Initial release
