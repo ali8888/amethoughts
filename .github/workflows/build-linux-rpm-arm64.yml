@@ -40,6 +40,16 @@ jobs:
             $HOME/flutter/bin/flutter --version
 
         - run: dart pub global activate fastforge
+
+        - name: Patch flutter_app_packager for rpm 4.20
+          run: |
+            F=$(find "$HOME/.pub-cache/hosted/pub.dev" -path '*/flutter_app_packager-*/lib/src/makers/rpm/make_rpm_config.dart' | head -1)
+            test -n "$F"
+            sed -i 's|cp -r \$appName/|cp -r ../$appName/|; s|cp -r \$appBinaryName|cp -r ../$appBinaryName|g' "$F"
+            test "$(grep -cF 'cp -r ../' "$F")" -eq 4
+            dart pub global deactivate fastforge
+            dart pub global activate fastforge
+            
         - name: Build rpm package
           run: PATH="$PATH:$HOME/.pub-cache/bin" fastforge release --name=release --jobs=linux-rpm
 
