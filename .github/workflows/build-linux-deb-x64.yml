@@ -44,8 +44,7 @@ jobs:
         - name: Find deb file
           id: find_deb
           run: |
-            ESCAPED_VERSION=$(regex_escape "${{ needs.build.outputs.version }}")
-            TEMP_DEB_PATH=$(find dist -regextype posix-extended -regex ".*/amethoughts-${ESCAPED_VERSION}*\+[0-9]+-linux\.deb")
+            TEMP_DEB_PATH=$(find dist -regextype posix-extended -regex ".*/amethoughts-${{ needs.build.outputs.version }}*\+[0-9]+-linux\.deb")
             DEB_PATH="amethoughts-${{ needs.build.outputs.version }}-linux-x64.deb"
             mv "$TEMP_DEB_PATH" "$DEB_PATH"
             echo "deb_path=$DEB_PATH" >> $GITHUB_OUTPUT
